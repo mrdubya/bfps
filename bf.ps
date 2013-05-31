@@ -3,7 +3,7 @@
 % Implementation of brainfuck in PostScript
 
 % Use array of integer objects for the cells instead of string
-/cells [ 65535 {0} repeat ] def
+/cells 65535 string def
 /data 0 def
 
 % Array based stack of jump back file positions
@@ -29,7 +29,7 @@
 
   (-) 0 get { cells data 2 copy get 1 sub put } bind
 
-  (.) 0 get { 1 string dup 0 cells data get put =print } bind
+  (.) 0 get { cells data 1 getinterval =print } bind
 
   (,) 0 get { cells data 3 -1 roll put } bind
 
