@@ -8,19 +8,16 @@
   /data 0 def
 
   % Array based stack of jump back file positions
-  /jumps 256 array def
-  /jump-top -1 def
+  /jumps [] def
 >> def
 
-% filepos push_jump -
-/push_jump {
-  /jump-top jump-top 1 add def
-  jumps jump-top 3 -1 roll put
+% filepos stack push-jump stack'
+/push-jump {
+  [ exch aload pop counttomark 2 add -1 roll ]
 } bind def
-% - pop_jump filepos
-/pop_jump {
-  jumps jump-top get
-  /jump-top jump-top 1 sub def
+% stack pop-jump filepos stack'
+/pop-jump {
+  [ exch aload pop counttomark 1 add 1 roll ]
 } bind def
 
 /next-cmd { read not { exit } if } bind def
@@ -59,13 +56,16 @@ ops begin
         } ifelse
       } loop
     }{
-      dup fileposition 1 sub push_jump
+      dup fileposition 1 sub
+      jumps push-jump /jumps exch def
     } ifelse
   } bind def
 
   (]) 0 get {
     cells data get 0 ne {
-      dup pop_jump setfileposition
+      dup
+      jumps pop-jump /jumps exch def
+      setfileposition
     } if
   } bind def
 end
