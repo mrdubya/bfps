@@ -2,13 +2,16 @@
 
 % Implementation of brainfuck interpreter in PostScript
 
-% Use array of integer objects for the cells instead of string
-/cells 65535 string def
-/data 0 def
+/bf-state <<
+  % Use array of integer objects for the cells instead of string
+  /cells 65535 string def
+  /data 0 def
 
-% Array based stack of jump back file positions
-/jumps 256 array def
-/jump-top -1 def
+  % Array based stack of jump back file positions
+  /jumps 256 array def
+  /jump-top -1 def
+>> def
+
 % filepos push_jump -
 /push_jump {
   /jump-top jump-top 1 add def
@@ -67,13 +70,15 @@ ops begin
   } bind def
 end
 
-% file bf -
+% file state bf -
 /bf {
-  { ops 1 index next-cmd get exec } loop
-  pop
+  begin
+    { ops 1 index next-cmd get exec } loop
+    pop
+  end
 } bind def
 
-currentfile bf
+currentfile bf-state bf
 +++++ +++++             initialize counter (cell #0) to 10
 [                       use loop to set the next four cells to 70/100/30/10
     > +++++ ++              add  7 to cell #1
