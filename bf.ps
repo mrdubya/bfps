@@ -20,7 +20,8 @@
   /jump-top jump-top 1 sub def
 } bind def
 
-/no-op {} bind def
+/next-cmd { read not { exit } if } bind def
+/no-op { } bind def
 /ops << 0 1 255 { //no-op } for >> def
 
 ops begin
@@ -39,8 +40,7 @@ ops begin
   ([) 0 get {
     cells data get 0 eq {
       0 {
-        1 index 
-        read not { pop exit } if
+        1 index next-cmd
         dup
         ([) 0 get eq {
           pop
@@ -69,10 +69,8 @@ end
 
 % file bf -
 /bf {
-  {
-    dup read not { pop exit } if
-    ops exch get exec
-  } loop
+  { ops 1 index next-cmd get exec } loop
+  pop
 } bind def
 
 currentfile bf
