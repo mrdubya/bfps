@@ -1,0 +1,100 @@
+%!PS
+
+% Implementation of brainfuck in PostScript
+
+% Use array of integer objects for the cells instead of string
+/cells [ 65535 {0} repeat ] def
+/data 0 def
+
+% Array based stack of jump back file positions
+/jumps 256 array def
+/jump-top -1 def
+% filepos push_jump -
+/push_jump {
+  /jump-top jump-top 1 add def
+  jumps jump-top 3 -1 roll put
+} bind def
+% - pop_jump filepos
+/pop_jump {
+  jumps jump-top get
+  /jump-top jump-top 1 sub def
+} bind def
+
+/ops <<
+  (>) 0 get { /data data 1 add def } bind
+
+  (<) 0 get { /data data 1 sub def } bind
+
+  (+) 0 get { cells data 2 copy get 1 add put } bind
+
+  (-) 0 get { cells data 2 copy get 1 sub put } bind
+
+  (.) 0 get { 1 string dup 0 cells data get put =print } bind
+
+  (,) 0 get { cells data 3 -1 roll put } bind
+
+  ([) 0 get {
+    cells data get 0 eq {
+      0 {
+        1 index 
+        read not { pop exit } if
+        dup
+        ([) 0 get eq {
+          pop
+          1 add
+        }{
+          (]) 0 get eq {
+            dup 0 eq {
+              pop
+              exit
+            } if
+            1 sub
+          } if
+        } ifelse
+      } loop
+    }{
+      dup fileposition 1 sub push_jump
+    } ifelse
+  } bind
+
+  (]) 0 get {
+    cells data get 0 ne {
+      dup pop_jump setfileposition
+    } if
+  } bind
+>> def
+
+% file bf -
+/bf {
+  {
+    dup read not { pop exit } if
+    ops 1 index known {
+      ops exch get exec
+    }{
+      pop
+    } ifelse
+  } loop
+} bind def
+
+currentfile bf
++++++ +++++             initialize counter (cell #0) to 10
+[                       use loop to set the next four cells to 70/100/30/10
+    > +++++ ++              add  7 to cell #1
+    > +++++ +++++           add 10 to cell #2 
+    > +++                   add  3 to cell #3
+    > +                     add  1 to cell #4
+    <<<< -                  decrement counter (cell #0)
+]                   
+> ++ .                  print 'H'
+> + .                   print 'e'
++++++ ++ .              print 'l'
+.                       print 'l'
++++ .                   print 'o'
+> ++ .                  print ' '
+<< +++++ +++++ +++++ .  print 'W'
+> .                     print 'o'
++++ .                   print 'r'
+----- - .               print 'l'
+----- --- .             print 'd'
+> + .                   print '!'
+> .                     print '\n'
