@@ -3,31 +3,25 @@
 % Implementation of brainfuck interpreter in PostScript
 
 % filepos stack-arr push-jump stack-arr'
-/push-jump {
-  [ exch aload pop counttomark 2 add -1 roll ]
-} bind def
+/push-jump { [ exch aload pop counttomark 2 add -1 roll ] } bind def
 % stack-arr pop-jump filepos stack-arr'
-/pop-jump {
-  [ exch aload pop counttomark 1 add 1 roll ]
-} bind def
-
+/pop-jump { [ exch aload pop counttomark 1 add 1 roll ] } bind def
+% file next-cmd int
 /next-cmd { read not { exit } if } bind def
+
+% Commands array - initialise as no-ops and then add specific commands
+
+% - no-op -
 /no-op { } bind def
 /ops [ 256 { //no-op } repeat ] def
 
 ops
 dup (>) 0 get { /data data 1 add def } bind put
-
 dup (<) 0 get { /data data 1 sub def } bind put
-
 dup (+) 0 get { cells data 2 copy get 1 add put } bind put
-
 dup (-) 0 get { cells data 2 copy get 1 sub put } bind put
-
 dup (.) 0 get { cells data 1 getinterval =print } bind put
-
 dup (,) 0 get { cells data 3 -1 roll put } bind put
-
 dup ([) 0 get {
     cells data get 0 eq {
       0 {
@@ -51,7 +45,6 @@ dup ([) 0 get {
       jumps push-jump /jumps exch def
     } ifelse
   } bind put
-
 dup (]) 0 get {
     cells data get 0 ne {
       dup
