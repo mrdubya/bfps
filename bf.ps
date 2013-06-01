@@ -5,7 +5,7 @@
 % filepos stack-arr push-jump stack-arr'
 /push-jump { [ exch aload pop counttomark 2 add -1 roll ] } bind def
 % stack-arr pop-jump filepos stack-arr'
-/pop-jump { [ exch aload pop counttomark 1 add 1 roll ] } bind def
+/pop-jump { [ exch aload pop counttomark 1 add 1 roll ] exch } bind def
 % file next-cmd int
 /next-cmd { read not { exit } if } bind def
 
@@ -25,7 +25,7 @@ dup (,) 0 get { cells data 3 -1 roll put } bind put
 dup ([) 0 get {
     cells data get 0 eq {
       0 {
-        1 index next-cmd
+        source next-cmd
         dup
         ([) 0 get eq {
           pop
@@ -41,22 +41,21 @@ dup ([) 0 get {
         } ifelse
       } loop
     }{
-      dup fileposition 1 sub
-      jumps push-jump /jumps exch def
+      /jumps source fileposition 1 sub jumps push-jump def
     } ifelse
   } bind put
 dup (]) 0 get {
     cells data get 0 ne {
-      dup
-      jumps pop-jump /jumps exch def
-      setfileposition
+      /jumps jumps pop-jump source exch setfileposition def
     } if
   } bind put
 pop
 
-% - bf-init state-dict
+% file bf-init state-dict
 /bf-init {
   <<
+    % Command source file
+    /source 3 -1 roll
     % Use array of integer objects for the cells instead of string
     /cells 65535 string
     /data 0
@@ -65,11 +64,10 @@ pop
   >>
 } bind def
 
-% file state-dict bf-interp -
+% state-dict bf-interp -
 /bf-interp {
   begin
-    { ops 1 index next-cmd get exec } loop
-    pop
+    { ops source next-cmd get exec } loop
   end
 } bind def
 
