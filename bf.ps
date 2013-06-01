@@ -23,25 +23,24 @@ dup (-) 0 get { bf-cells bf-data 2 copy get 1 sub put } bind put
 dup (.) 0 get { bf-stdout bf-cells bf-data get write } bind put
 dup (,) 0 get { bf-cells bf-data 3 -1 roll put } bind put
 dup ([) 0 get {
-    bf-cells bf-data get 0 eq {
+    bf-cells bf-data get 0 ne {
+      /bf-jumps bf-source fileposition 1 sub bf-jumps push-jump def
+    }{
+      % Jump to matching ]. Count +1 for [ and -1 for ]. If the count is 0 for a
+      % ] it is the matching ] command.
       0 {
         bf-source next-cmd
-        dup
-        ([) 0 get eq {
-          pop
-          1 add
+        dup ([) 0 get eq {
+          pop 1 add
         }{
           (]) 0 get eq {
             dup 0 eq {
-              pop
-              exit
+              pop exit
             } if
             1 sub
           } if
         } ifelse
       } loop
-    }{
-      /bf-jumps bf-source fileposition 1 sub bf-jumps push-jump def
     } ifelse
   } bind put
 dup (]) 0 get {
