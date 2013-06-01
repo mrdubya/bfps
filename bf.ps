@@ -9,6 +9,19 @@
 % file next-cmd int
 /next-cmd { read not { exit } if } bind def
 
+% - get-char int
+/get-char {
+  {
+    (%lineedit) (r) file
+    dup read {
+      exch
+      dup flushfile closefile
+      exit
+    } if
+    pop
+  } loop
+} bind def
+
 % Commands array - initialise as no-bf-ops and then add specific commands
 
 % - no-op -
@@ -20,8 +33,8 @@ dup (>) 0 get { /bf-data bf-data 1 add def } bind put
 dup (<) 0 get { /bf-data bf-data 1 sub def } bind put
 dup (+) 0 get { bf-cells bf-data 2 copy get 1 add put } bind put
 dup (-) 0 get { bf-cells bf-data 2 copy get 1 sub put } bind put
-dup (.) 0 get { bf-stdout bf-cells bf-data get write } bind put
-dup (,) 0 get { bf-cells bf-data 3 -1 roll put } bind put
+dup (.) 0 get { bf-stdout dup bf-cells bf-data get write flushfile } bind put
+dup (,) 0 get { bf-cells bf-data get-char put } bind put
 dup ([) 0 get {
     bf-cells bf-data get 0 ne {
       /bf-jumps bf-source fileposition 1 sub bf-jumps push-jump def
@@ -100,3 +113,5 @@ currentfile bf
 ----- --- .             print 'd'
 > + .                   print '!'
 > .                     print '\n'
+> , + .
+< .
