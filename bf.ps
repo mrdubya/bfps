@@ -22,22 +22,22 @@
 
 /next-cmd { read not { exit } if } bind def
 /no-op { } bind def
-/ops << 0 1 255 { //no-op } for >> def
+/ops [ 256 { //no-op } repeat ] def
 
-ops begin
-  (>) 0 get { /data data 1 add def } bind def
+ops
+dup (>) 0 get { /data data 1 add def } bind put
 
-  (<) 0 get { /data data 1 sub def } bind def
+dup (<) 0 get { /data data 1 sub def } bind put
 
-  (+) 0 get { cells data 2 copy get 1 add put } bind def
+dup (+) 0 get { cells data 2 copy get 1 add put } bind put
 
-  (-) 0 get { cells data 2 copy get 1 sub put } bind def
+dup (-) 0 get { cells data 2 copy get 1 sub put } bind put
 
-  (.) 0 get { cells data 1 getinterval =print } bind def
+dup (.) 0 get { cells data 1 getinterval =print } bind put
 
-  (,) 0 get { cells data 3 -1 roll put } bind def
+dup (,) 0 get { cells data 3 -1 roll put } bind put
 
-  ([) 0 get {
+dup ([) 0 get {
     cells data get 0 eq {
       0 {
         1 index next-cmd
@@ -59,16 +59,16 @@ ops begin
       dup fileposition 1 sub
       jumps push-jump /jumps exch def
     } ifelse
-  } bind def
+  } bind put
 
-  (]) 0 get {
+dup (]) 0 get {
     cells data get 0 ne {
       dup
       jumps pop-jump /jumps exch def
       setfileposition
     } if
-  } bind def
-end
+  } bind put
+pop
 
 % file state bf -
 /bf {
