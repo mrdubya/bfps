@@ -9,23 +9,23 @@
 % file next-cmd int
 /next-cmd { read not { exit } if } bind def
 
-% Commands array - initialise as no-ops and then add specific commands
+% Commands array - initialise as no-bf-ops and then add specific commands
 
 % - no-op -
 /no-op { } bind def
-/ops [ 256 { //no-op } repeat ] def
+/bf-ops [ 256 { //no-op } repeat ] def
 
-ops
-dup (>) 0 get { /data data 1 add def } bind put
-dup (<) 0 get { /data data 1 sub def } bind put
-dup (+) 0 get { cells data 2 copy get 1 add put } bind put
-dup (-) 0 get { cells data 2 copy get 1 sub put } bind put
-dup (.) 0 get { cells data 1 getinterval =print } bind put
-dup (,) 0 get { cells data 3 -1 roll put } bind put
+bf-ops
+dup (>) 0 get { /bf-data bf-data 1 add def } bind put
+dup (<) 0 get { /bf-data bf-data 1 sub def } bind put
+dup (+) 0 get { bf-cells bf-data 2 copy get 1 add put } bind put
+dup (-) 0 get { bf-cells bf-data 2 copy get 1 sub put } bind put
+dup (.) 0 get { bf-cells bf-data 1 getinterval =print } bind put
+dup (,) 0 get { bf-cells bf-data 3 -1 roll put } bind put
 dup ([) 0 get {
-    cells data get 0 eq {
+    bf-cells bf-data get 0 eq {
       0 {
-        source next-cmd
+        bf-source next-cmd
         dup
         ([) 0 get eq {
           pop
@@ -41,12 +41,12 @@ dup ([) 0 get {
         } ifelse
       } loop
     }{
-      /jumps source fileposition 1 sub jumps push-jump def
+      /bf-jumps bf-source fileposition 1 sub bf-jumps push-jump def
     } ifelse
   } bind put
 dup (]) 0 get {
-    cells data get 0 ne {
-      /jumps jumps pop-jump source exch setfileposition def
+    bf-cells bf-data get 0 ne {
+      /bf-jumps bf-jumps pop-jump bf-source exch setfileposition def
     } if
   } bind put
 pop
@@ -54,20 +54,20 @@ pop
 % file bf-init state-dict
 /bf-init {
   <<
-    % Command source file
-    /source 3 -1 roll
-    % Use array of integer objects for the cells instead of string
-    /cells 65535 string
-    /data 0
+    % Command bf-source file
+    /bf-source 3 -1 roll
+    % Use array of integer objects for the bf-cells instead of string
+    /bf-cells 65535 string
+    /bf-data 0
     % Array based stack of jump back file positions
-    /jumps 0 array
+    /bf-jumps 0 array
   >>
 } bind def
 
 % state-dict bf-interp -
 /bf-interp {
   begin
-    { ops source next-cmd get exec } loop
+    { bf-ops bf-source next-cmd get exec } loop
   end
 } bind def
 
