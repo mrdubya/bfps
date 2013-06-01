@@ -20,7 +20,7 @@ dup (>) 0 get { /bf-data bf-data 1 add def } bind put
 dup (<) 0 get { /bf-data bf-data 1 sub def } bind put
 dup (+) 0 get { bf-cells bf-data 2 copy get 1 add put } bind put
 dup (-) 0 get { bf-cells bf-data 2 copy get 1 sub put } bind put
-dup (.) 0 get { bf-cells bf-data 1 getinterval =print } bind put
+dup (.) 0 get { bf-stdout bf-cells bf-data get write } bind put
 dup (,) 0 get { bf-cells bf-data 3 -1 roll put } bind put
 dup ([) 0 get {
     bf-cells bf-data get 0 eq {
@@ -56,6 +56,8 @@ pop
   <<
     % Command bf-source file
     /bf-source 3 -1 roll
+    % Output defaults to stdout
+    /bf-stdout (%stdout) (w) file
     % Use array of integer objects for the bf-cells instead of string
     /bf-cells 65535 string
     /bf-data 0
