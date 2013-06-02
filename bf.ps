@@ -18,8 +18,7 @@
   {
     (%lineedit) (r) file
     dup read {
-      exch
-      dup flushfile closefile
+      exch closefile
       exit
     } if
     pop
@@ -119,5 +118,7 @@ currentfile bf
 ----- --- .             print 'd'
 > + .                   print '!'
 > .                     print '\n'
+> , + .
+< .
 > , + .
 < .
