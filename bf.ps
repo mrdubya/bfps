@@ -2,12 +2,14 @@
 
 % Implementation of brainfuck interpreter in PostScript
 
+% Return jump stack implemented with an array with the top at the start.
 % filepos stack-arr push-jump stack-arr'
-/push-jump { [ exch aload pop counttomark 2 add -1 roll ] } bind def
+/push-jump { aload length 1 add array astore } bind def
 % stack-arr pop-jump stack-arr'
-/pop-jump { [ exch aload pop pop ] } bind def
+/pop-jump { dup 1 exch length 1 sub getinterval } bind def
 % stack-arr top-jump filepos
-/top-jump { dup length 1 sub get } bind def
+/top-jump { 0 get } bind def
+
 % file next-cmd int
 /next-cmd { read not { exit } if } bind def
 
