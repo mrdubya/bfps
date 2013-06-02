@@ -4,8 +4,10 @@
 
 % filepos stack-arr push-jump stack-arr'
 /push-jump { [ exch aload pop counttomark 2 add -1 roll ] } bind def
-% stack-arr pop-jump filepos stack-arr'
-/pop-jump { [ exch aload pop counttomark 1 add 1 roll ] exch } bind def
+% stack-arr pop-jump stack-arr'
+/pop-jump { [ exch aload pop pop ] } bind def
+% stack-arr top-jump filepos
+/top-jump { dup length 1 sub get } bind def
 % file next-cmd int
 /next-cmd { read not { exit } if } bind def
 
@@ -37,7 +39,7 @@ dup (.) 0 get { bf-stdout dup bf-cells bf-data get write flushfile } bind put
 dup (,) 0 get { bf-cells bf-data get-char put } bind put
 dup ([) 0 get {
     bf-cells bf-data get 0 ne {
-      /bf-jumps bf-source fileposition 1 sub bf-jumps push-jump def
+      /bf-jumps bf-source fileposition bf-jumps push-jump def
     }{
       % Jump to matching ]. Count +1 for [ and -1 for ]. If the count is 0 for a
       % ] it is the matching ] command.
@@ -58,8 +60,10 @@ dup ([) 0 get {
   } bind put
 dup (]) 0 get {
     bf-cells bf-data get 0 ne {
-      /bf-jumps bf-jumps pop-jump bf-source exch setfileposition def
-    } if
+      bf-source bf-jumps top-jump setfileposition
+    }{
+      /bf-jumps bf-jumps pop-jump def
+    } ifelse
   } bind put
 pop
 
