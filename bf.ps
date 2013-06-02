@@ -40,33 +40,33 @@ dup (-) 0 get { bf-cells bf-data 2 copy get 1 sub put } bind put
 dup (.) 0 get { bf-stdout dup bf-cells bf-data get write flushfile } bind put
 dup (,) 0 get { bf-cells bf-data get-char put } bind put
 dup ([) 0 get {
-    bf-cells bf-data get 0 ne {
-      /bf-jumps bf-source fileposition bf-jumps push-jump def
-    }{
-      % Jump to matching ]. Count +1 for [ and -1 for ]. If the count is 0 for a
-      % ] it is the matching ] command.
-      0 {
-        bf-source next-cmd
-        dup ([) 0 get eq {
-          pop 1 add
-        }{
-          (]) 0 get eq {
-            dup 0 eq {
-              pop exit
-            } if
-            1 sub
+  bf-cells bf-data get 0 ne {
+    /bf-jumps bf-source fileposition bf-jumps push-jump def
+  }{
+    % Jump to matching ]. Count +1 for [ and -1 for ]. If the count is 0 for a
+    % ] it is the matching ] command.
+    0 {
+      bf-source next-cmd
+      dup ([) 0 get eq {
+        pop 1 add
+      }{
+        (]) 0 get eq {
+          dup 0 eq {
+            pop exit
           } if
-        } ifelse
-      } loop
-    } ifelse
-  } bind put
+          1 sub
+        } if
+      } ifelse
+    } loop
+  } ifelse
+} bind put
 dup (]) 0 get {
-    bf-cells bf-data get 0 ne {
-      bf-source bf-jumps top-jump setfileposition
-    }{
-      /bf-jumps bf-jumps pop-jump def
-    } ifelse
-  } bind put
+  bf-cells bf-data get 0 ne {
+    bf-source bf-jumps top-jump setfileposition
+  }{
+    /bf-jumps bf-jumps pop-jump def
+  } ifelse
+} bind put
 pop
 
 % file bf-init state-dict
