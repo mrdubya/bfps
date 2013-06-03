@@ -28,12 +28,15 @@
 % file next-cmd int
 /next-cmd { read not { exit } if } bind def
 
-% - get-char int
+% - get-char string
+/lineedit-buffer 80 string def
 /get-char {
   {
     (%lineedit) (r) file
-    dup read {
+    dup //lineedit-buffer readline pop
+    dup length 0 gt {
       exch closefile
+      0 1 getinterval
       exit
     } if
     pop
@@ -51,7 +54,7 @@ dup (<) 0 get { /bf-data bf-data 1 sub def } bind put
 dup (+) 0 get { bf-cells bf-data 2 copy get 1 add put } bind put
 dup (-) 0 get { bf-cells bf-data 2 copy get 1 sub put } bind put
 dup (.) 0 get { bf-stdout dup bf-cells bf-data get write flushfile } bind put
-dup (,) 0 get { bf-cells bf-data get-char put } bind put
+dup (,) 0 get { bf-cells bf-data bf-stdin read pop put } bind put
 dup ([) 0 get {
   bf-cells bf-data get 0 ne {
     /bf-jumps bf-source fileposition bf-jumps push-jump def
@@ -87,6 +90,8 @@ pop
   <<
     % Command bf-source file
     /bf-source 3 -1 roll
+    % Input defaults to stdout
+    /bf-stdin //get-char 0 () /SubFileDecode filter
     % Output defaults to stdout
     /bf-stdout (%stdout) (w) file
     % Use array of integer objects for the bf-cells instead of string
@@ -102,6 +107,11 @@ pop
   begin
     { bf-ops bf-source next-cmd get exec } loop
   end
+} bind def
+
+% state-dict file bf-set-stdin state-dict
+/bf-set-stdin {
+  1 index /bf-stdin 3 -1 roll put
 } bind def
 
 % state-dict file bf-set-stdout state-dict
