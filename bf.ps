@@ -104,6 +104,11 @@ pop
   end
 } bind def
 
+% state-dict file bf-set-stdout state-dict
+/bf-set-stdout {
+  1 index /bf-stdout 3 -1 roll put
+} bind def
+
 % file bf -
 /bf {
   bf-init
