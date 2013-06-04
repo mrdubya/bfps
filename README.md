@@ -26,7 +26,17 @@ To run the example hello world Brainfuck program do the following:
     $ cp examples/helloworld.bf prog.bf
     $ gs -q -dBATCH bf.ps
     Hello World!
-    $
+    $ 
+
+For convenience there is a simple shell script to invoke Ghostscript for you, so
+you only need to run `bf`.
+So the previous example becomes:
+
+    :::sh
+    $ cp examples/helloworld.bf prog.bf
+    $ bf
+    Hello World!
+    $ 
 
 Interpreter Details
 ===================
