@@ -22,6 +22,7 @@ The main file `bf.ps` expects to find a file called `prog.bf` in the same
 directory as it.
 To run the example hello world Brainfuck program do the following:
 
+    :::sh
     $ cp examples/helloworld.bf prog.bf
     $ gs -q -dBATCH bf.ps
     Hello World!
@@ -62,6 +63,23 @@ A new interpreter state dictionary is created with `bf-init` which takes a file
 object on the operand stack for the source of the Brainfuck program.
 A convenience procedure, `bf`, is provided that takes a program file object,
 creates a new interpreter state and starts interpretation.
+
+It is possible to redirect where the Brainfuck output goes and where input comes
+from.
+After creating the initial machine state the output can be sent to a file by
+calling `bf-set-stdout` while a file can be used for feeding input with
+`bf-set-stdin`.
+Each procedure takes the machine state dictionary and a file object (opened
+for read or write as required) and returns an update machine state dictionary.
+This allows a sequence of calls to modify the machine state as required.
+The following example sends output to a file in the same directory, taking input
+from another file:
+
+    :::Postscript
+    bf-init
+    (bf-output) (w) file bf-set-stdout
+    (bf-input) (r) file bf-set-stdin
+    bf-interp
 
 Note that PostScript is itself an interpreted language so performance of the
 interpreter will not be great.
