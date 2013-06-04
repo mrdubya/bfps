@@ -90,7 +90,7 @@ pop
   <<
     % Command bf-source file
     /bf-source 3 -1 roll
-    % Input defaults to stdout
+    % Input defaults to input via %lineedit
     /bf-stdin //get-char 0 () /SubFileDecode filter
     % Output defaults to stdout
     /bf-stdout (%stdout) (w) file
