@@ -14,8 +14,8 @@ The interpreter has been developed using the
 and stdout for reading and writing output.
 It does not write the result of the program to a raster so it should not be sent
 to a printer.
-The implementation uses standard PostScript operators and environment but
-PostScript interpreters may not provide the full environment so your mileage may
+The implementation uses standard PostScript operators and environment but not
+all PostScript interpreters provide the full environment so your mileage may
 vary.
 
 The main file `bf.ps` expects to find a file called `prog.bf` in the same
@@ -24,7 +24,7 @@ To run the example hello world Brainfuck program do the following:
 
     :::sh
     $ cp examples/helloworld.bf prog.bf
-    $ gs -q -dBATCH bf.ps
+    $ gs -q -dBATCH -dNODISPLAY bf.ps
     Hello World!
     $ 
 
@@ -44,23 +44,22 @@ Interpreter Details
 The Implementation
 ------------------
 
-The interpreter loop is very simple, read command byte, get procedure for
-command from array, execute procedure.
+The interpreter loop is very simple, read command byte from stdin, get
+PostScript procedure for command from indexed array, execute the procedure.
 An array for all possible command characters is initialised with no-op
-procedures and then procedures for the Brainfuck commands are added to
-the array.
+procedures and then update it with procedures for the Brainfuck commands.
 
 The most complex behaviour is with the jump commands.
 Jumping forward is relatively simple, just count up for any seen `[` commands
 and down for any `]` commands.
 If a `]` command is seen and the count is zero you have found the matching jump
 command.
-Reading backwards is not so simple using PostScript so I went with a simple
-stack approach which also provides an optimisation.
-When not jumping forward remember the offset of the most recently seen `[`
-command is pushed onto the stack.
-At the next `]` command if jumping backwards use the offset on top of the stack,
-else remove it altogether.
+Reading backwards is not straightforward in PostScript so I went with the simple
+approach of keeping a stack of offsets.
+At a `[` command and not jumping forward the current offset is pushed onto the
+stack.
+At the corresponding `]` command and jumping backwards use the offset on top of
+the stack else remove it altogether.
 
 The only option for interactive input is to use the `%lineedit` device.
 This is line based so I use only the first character and throw the rest of the
@@ -93,12 +92,12 @@ from another file:
 
 Note that PostScript is itself an interpreted language so performance of the
 interpreter will not be great.
-I have tried to design the code to be as performant yet still readable.
+I have tried to design the code to be performant yet still readable.
 There are some things that could be made quicker but it is most likely not worth
 it.
-Also the return jump stack array is regenerated on every push, and while
-PostScript is normally garbage collected a sufficiently active or long running
-program may encounter a PostScript `VMERROR` and stop.
+Also a new version of the return jump stack array is created on every push, and
+while PostScript is normally garbage collected a sufficiently active or long
+running program may encounter a PostScript `VMERROR` and stop.
 
 Implementation Constraints
 --------------------------
