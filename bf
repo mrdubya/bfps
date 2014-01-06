@@ -1,2 +1,2 @@
 #!/bin/sh
-gs -q -dBATCH bf.ps
+gs -q -dBATCH -dNODISPLAY bf.ps
