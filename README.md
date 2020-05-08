@@ -22,21 +22,23 @@ The main file `bf.ps` expects to find a file called `prog.bf` in the same
 directory as it.
 To run the example hello world Brainfuck program do the following:
 
-    :::sh
-    $ cp examples/helloworld.bf prog.bf
-    $ gs -q -dBATCH -dNODISPLAY bf.ps
-    Hello World!
-    $ 
+```console
+$ cp examples/helloworld.bf prog.bf
+$ gs -q -dBATCH -dNODISPLAY bf.ps
+Hello World!
+$ 
+```
 
 For convenience there is a simple shell script to invoke Ghostscript for you, so
 you only need to run `bf`.
 So the previous example becomes:
 
-    :::sh
-    $ cp examples/helloworld.bf prog.bf
-    $ bf
-    Hello World!
-    $ 
+```console
+$ cp examples/helloworld.bf prog.bf
+$ bf
+Hello World!
+$ 
+```
 
 Interpreter Details
 ===================
@@ -84,11 +86,12 @@ This allows a sequence of calls to modify the machine state as required.
 The following example sends output to a file in the same directory, taking input
 from another file:
 
-    :::Postscript
-    bf-init
-    (bf-output) (w) file bf-set-stdout
-    (bf-input) (r) file bf-set-stdin
-    bf-interp
+```Postscript
+bf-init
+(bf-output) (w) file bf-set-stdout
+(bf-input) (r) file bf-set-stdin
+bf-interp
+```
 
 Note that PostScript is itself an interpreted language so performance of the
 interpreter will not be great.
